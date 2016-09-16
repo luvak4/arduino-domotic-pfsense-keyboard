@@ -66,6 +66,9 @@ void setup() {
   pinMode(pinPushButton02, INPUT);
   pinMode(pinPushButton03, INPUT);
   pinMode(pinPushButton04, INPUT);
+   // impostazione TX e RX
+  vw_set_tx_pin(transmit_pin);
+  vw_setup(2000);      
 }
 //================================
 // loop
@@ -132,8 +135,11 @@ void loop() {
 }
 
 void txPulsantePremuto(char nPushButton){
-  msgPushButton[12]=nPushButton;
+      digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);              // wait for a second
+  digitalWrite(13, LOW);
+  msgPushButton[11]=nPushButton;
   vw_send((uint8_t *)msgPushButton,13);
   vw_wait_tx(); // Wait until the whole message is gone
-  msgPushButton[12]='0';
+  msgPushButton[11]='0';
 }
