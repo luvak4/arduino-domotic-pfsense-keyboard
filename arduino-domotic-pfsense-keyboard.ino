@@ -40,6 +40,11 @@
 /////////////////////////////////////
 
 #include <VirtualWire.h>
+const int MSG_LEN = 13;
+const int POSIZIONE_CARATT = 11;
+uint8_t buf[VW_MAX_MESSAGE_LEN];
+uint8_t buflen = VW_MAX_MESSAGE_LEN;
+
 // 
 int pfSenseInternalStep=1;
 int seconds=0;
@@ -56,7 +61,8 @@ const int pinPushButton03 =4;
 const int pinPushButton04 =5;
 const int pinLED =13;
 // prefix of command to transmit
-char msgPushButton[13]  ="pulsPFSE0000";
+char msgPushButton[MSG_LEN]  ="pulsPFSE0000";
+
 //================================
 // setup
 //================================
@@ -135,11 +141,10 @@ void loop() {
 }
 
 void txPulsantePremuto(char nPushButton){
-      digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);              // wait for a second
-  digitalWrite(13, LOW);
-  msgPushButton[11]=nPushButton;
-  vw_send((uint8_t *)msgPushButton,13);
+  digitalWrite(pinLED, HIGH);
+  msgPushButton[POSIZIONE_CARATT]=nPushButton;
+  vw_send((uint8_t *)msgPushButton,MSG_LEN);
   vw_wait_tx(); // Wait until the whole message is gone
-  msgPushButton[11]='0';
+  msgPushButton[POSIZIONE_CARATT]='0';
+   digitalWrite(pinLED, LOW);
 }
