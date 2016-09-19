@@ -38,13 +38,17 @@
 /////////////////////////////////////
 //// this is the "keyboard" code ////
 /////////////////////////////////////
-
+#include <IRremote.h>
 #include <VirtualWire.h>
+
 const int MSG_LEN = 13;
 const int POSIZIONE_CARATT = 11;
 uint8_t buf[VW_MAX_MESSAGE_LEN];
 uint8_t buflen = VW_MAX_MESSAGE_LEN;
-
+// Ir receiver pin etc
+int RECV_PIN = 2;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
 // 
 int pfSenseInternalStep=1;
 int seconds=0;
@@ -63,18 +67,52 @@ const int pinLED =13;
 // prefix of command to transmit
 char msgPushButton[MSG_LEN]  ="pulsPFSE0000";
 
+
+void dump(decode_results *results) {
+  //int count = results->rawlen;
+  //if (results->decode_type == UNKNOWN) {
+  //  Serial.println("Could not decode message");
+  //} 
+  
+  //else {
+  
+    long gg =results->value;
+    gg =gg - 16712445;
+    //gg=gg-12445;
+    long res[]={40800,24480,57120,8160,0,48960,56610,42330,36210,26010,38250,44370,11730,5610,30600,3570,13770,22440,16320,18360,20400};
+    for (int r=0; r<21 ; r++){
+      if (res[r]==gg){
+        switch (r){
+          case 0:
+            txPulsantePremuto('1');
+            break;
+          case 1:
+            txPulsantePremuto('2');
+            break;  
+          case 2:
+            txPulsantePremuto('3');
+            break;
+          case 3:
+            txPulsantePremuto('4');
+            break;                                   
+        }
+      }
+    }
+  //}
+  
+  
+}
+
 //================================
 // setup
 //================================
 void setup() {
   pinMode(pinLED, OUTPUT);
-  pinMode(pinPushButton01, INPUT);
-  pinMode(pinPushButton02, INPUT);
-  pinMode(pinPushButton03, INPUT);
-  pinMode(pinPushButton04, INPUT);
    // impostazione TX e RX
   vw_set_tx_pin(transmit_pin);
-  vw_setup(2000);      
+  vw_setup(2000); 
+  //
+  irrecv.enableIRIn();     
 }
 //================================
 // loop
@@ -118,18 +156,11 @@ void loop() {
 	//--------------------------------
 	// BEGIN every second
 	//--------------------------------
-	if (digitalRead(pinPushButton01)){
-	  txPulsantePremuto('1');
-	}
-	if (digitalRead(pinPushButton02)){
-	  txPulsantePremuto('2');
-	}
-	if (digitalRead(pinPushButton03)){
-	  txPulsantePremuto('3');
-	}
-	if (digitalRead(pinPushButton04)){
-	  txPulsantePremuto('4');
-	}
+
+  if (irrecv.decode(&results)) {
+    dump(&results);
+    irrecv.resume();
+  }
 	//--------------------------------
 	// END every second
 	//--------------------------------
