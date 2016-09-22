@@ -33,7 +33,8 @@ decode_results results;
 int pfSenseInternalStep=1;
 int seconds=0;
 // prefix to transmit
-char msgPushButton[MSG_LEN]  ="pulsPFSE0000";
+char msgPushButton[MSG_LEN]          ="pulsPFSE0000";
+char msgPushButtonActuator[MSG_LEN]  ="pulsACTU0000";
 // ir-keyboard constant
 const long irK = 16712445;
 // ir-keyboard codes (reduce by irK)
@@ -67,7 +68,23 @@ void dump(decode_results *results) {
           case 3:
 	    // PING
             txPulsantePremuto('4');
-            break;                                   
+            break;
+          case 6:
+            // rele ON
+            txPulsanteActuator('1');  
+            break;  
+          case 7:
+            // rele OFF
+            txPulsanteActuator('2');
+            break;       
+          case 8:
+            // leggi stato rele
+            txPulsanteActuator('3');  
+            break;
+          case 9:
+            // leggi analogico 0
+            txPulsanteActuator('1');  
+            break;                                                                 
         }
       }
     }
@@ -149,5 +166,14 @@ void txPulsantePremuto(char nPushButton){
   vw_send((uint8_t *)msgPushButton,MSG_LEN);
   vw_wait_tx(); // Wait until the whole message is gone
   msgPushButton[POSIZIONE_CARATT]='0';
+  digitalWrite(pinLED, LOW);
+}
+
+void txPulsanteActuator(char nPushButton){
+  digitalWrite(pinLED, HIGH);
+  msgPushButtonActuator[POSIZIONE_CARATT]=nPushButton;
+  vw_send((uint8_t *)msgPushButtonActuator,MSG_LEN);
+  vw_wait_tx(); // Wait until the whole message is gone
+  msgPushButtonActuator[POSIZIONE_CARATT]='0';
   digitalWrite(pinLED, LOW);
 }
