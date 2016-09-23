@@ -41,7 +41,7 @@ const long irK = 16712445;
 const long res[]={40800,24480,57120,8160,0,48960,56610,42330,\
  	    36210,26010,38250,44370,11730,5610,30600,\
 	    3570,13770,22440,16320,18360,20400};
-
+int pulsPremuto=999;
 //================================
 // IR dump
 //================================
@@ -52,40 +52,7 @@ void dump(decode_results *results) {
     // find if in array
     for (int r=0; r<21 ; r++){
       if (res[r]==gg){
-        switch (r){
-          case 0:
-	    // HALT
-            txPulsantePremuto('1');
-            break;
-          case 1:
-	    // REBOOT
-            txPulsantePremuto('2');
-            break;  
-          case 2:
-	    // SYNC
-            txPulsantePremuto('3');
-            break;
-          case 3:
-	    // PING
-            txPulsantePremuto('4');
-            break;
-          case 6:
-            // rele ON
-            txPulsanteActuator('1');  
-            break;  
-          case 7:
-            // rele OFF
-            txPulsanteActuator('2');
-            break;       
-          case 8:
-            // leggi stato rele
-            txPulsanteActuator('3');  
-            break;
-          case 9:
-            // leggi analogico 0
-            txPulsanteActuator('1');  
-            break;                                                                 
-        }
+        pulsPremuto=r;
       }
     }
 }
@@ -129,6 +96,14 @@ void loop() {
 	//--------------------------------
 	// every 0.025 Sec
 	//--------------------------------
+  if (irrecv.decode(&results)) {
+    // receive
+    dump(&results);
+    irrecv.resume();
+  }
+
+
+  
       }
     } else {
       Pa = Qa - Xa;
@@ -143,11 +118,44 @@ void loop() {
 	//--------------------------------
 	// BEGIN every second
 	//--------------------------------
-	if (irrecv.decode(&results)) {
-	  // receive
-	  dump(&results);
-	  irrecv.resume();
-	}
+  if (pulsPremuto<999){
+          switch (pulsPremuto){
+          case 0:
+      // HALT
+            txPulsantePremuto('1');
+            break;
+          case 1:
+      // REBOOT
+            txPulsantePremuto('2');
+            break;  
+          case 2:
+      // SYNC
+            txPulsantePremuto('3');
+            break;
+          case 3:
+      // PING
+            txPulsantePremuto('4');
+            break;
+          case 6:
+            // rele ON
+            txPulsanteActuator('1');  
+            break;  
+          case 7:
+            // rele OFF
+            txPulsanteActuator('2');
+            break;       
+          case 8:
+            // leggi stato rele
+            txPulsanteActuator('3');  
+            break;
+          case 9:
+            // leggi analogico 0
+            txPulsanteActuator('4');  
+            break;                                                                 
+        }
+        pulsPremuto=999;
+  }
+
 	//--------------------------------
 	// END every second
 	//--------------------------------
