@@ -118,7 +118,7 @@ void loop() {
 	//--------------------------------
 	// BEGIN every second
 	//--------------------------------
-  if (pulsPremuto<999){
+  if (pulsPremuto!=999){
           switch (pulsPremuto){
           case 0:
       // HALT
