@@ -22,9 +22,11 @@ int dutyCycle = 0;
 unsigned long int Pa;
 unsigned long int Pb;
 // radio modules
-const int transmit_pin = 12;
+const int transmit_pin = 12; 
+const int receive_pin = 11; 
 uint8_t buf[VW_MAX_MESSAGE_LEN];
 uint8_t buflen = VW_MAX_MESSAGE_LEN;
+
 // IR receiver
 int RECV_PIN = 2;
 IRrecv irrecv(RECV_PIN);
@@ -62,9 +64,13 @@ void dump(decode_results *results) {
 void setup() {
   // led
   pinMode(pinLED, OUTPUT);
-  // radio tx
+
+    // radio tx rx
   vw_set_tx_pin(transmit_pin);
-  vw_setup(2000); // speed
+  vw_set_rx_pin(receive_pin);  
+  vw_setup(2000);      
+  vw_rx_start(); 
+    Serial.begin(9600);
   // IR receiver enabled
   irrecv.enableIRIn();     
 }
@@ -118,6 +124,23 @@ void loop() {
 	//--------------------------------
 	// BEGIN every second
 	//--------------------------------
+
+  ///
+  /// solo per test
+  if (vw_get_message(buf, &buflen)){
+     //
+    String stringaRX="";
+    //
+    // retriving which pushbutton
+    // was pressed (ir-keyboard)
+    for (int i = 1; i <= POSIZIONE_CARATT; i++){
+      stringaRX += char(buf[i]);
+    }
+    //Serial.println(stringaRX);
+    Serial.println(stringaRX);
+  }
+  ///
+  ///
   if (pulsPremuto!=999){
           switch (pulsPremuto){
           case 0:
