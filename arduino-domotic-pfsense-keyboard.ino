@@ -67,10 +67,10 @@ void setup() {
 
     // radio tx rx
   vw_set_tx_pin(transmit_pin);
-  vw_set_rx_pin(receive_pin);  
+  //vw_set_rx_pin(receive_pin);  
   vw_setup(2000);      
-  vw_rx_start(); 
-    Serial.begin(9600);
+  //vw_rx_start(); 
+  //  Serial.begin(9600);
   // IR receiver enabled
   irrecv.enableIRIn();     
 }
@@ -126,7 +126,8 @@ void loop() {
 	//--------------------------------
 
   ///
-  /// solo per test
+  /*
+  /// solo per test RX
   if (vw_get_message(buf, &buflen)){
      //
     String stringaRX="";
@@ -137,9 +138,10 @@ void loop() {
       stringaRX += char(buf[i]);
     }
     //Serial.println(stringaRX);
-    Serial.println(stringaRX);
+    //Serial.println(stringaRX);
   }
   ///
+  */
   ///
   if (pulsPremuto!=999){
           switch (pulsPremuto){
