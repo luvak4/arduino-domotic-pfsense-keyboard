@@ -161,6 +161,9 @@ void loop() {
       // PING
             txPulsantePremuto('4');
             break;
+          case 4:
+            txPulsantePremuto('5');
+            break;
           case 6:
             // rele ON
             txPulsanteActuator('1');  
